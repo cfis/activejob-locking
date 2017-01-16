@@ -6,3 +6,4 @@ coverage/
 .rbx/
 .bundle/
 .idea
+pkg
