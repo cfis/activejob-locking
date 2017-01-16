@@ -1,0 +1,8 @@
+.gem
+.yardoc
+doc/
+Gemfile.lock
+coverage/
+.rbx/
+.bundle/
+.idea
