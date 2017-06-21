@@ -4,7 +4,7 @@ class SerialJob < ActiveJob::Base
   self.lock_acquire_time = 2
 
   # We want the job ids to be all the same for testing
-  def lock_key
+  def lock_key(index, sleep_time)
     self.class.name
   end
 

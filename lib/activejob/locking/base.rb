@@ -24,7 +24,7 @@ module ActiveJob
           self.adapter.lock_token = job_data['lock_token']
         end
 
-        def lock_key
+        def lock_key(*args)
           [self.class.name, serialize_arguments(self.arguments)].join('/')
         end
 
@@ -36,8 +36,12 @@ module ActiveJob
             # Merge local and global options
             merged_options = ActiveJob::Locking.options.dup.merge(self.class.lock_options)
 
+            # Get the key
+            base_key = self.lock_key(*self.arguments)
+            key = "activejoblocking:#{base_key}"
+
             # Remember the lock might be acquired in one process and released in another
-            merged_options.adapter.new(self.lock_key, merged_options)
+            merged_options.adapter.new(key, merged_options)
           end
           @adapter
         end

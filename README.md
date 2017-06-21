@@ -34,11 +34,11 @@ class UniqueJob < ActiveJob::Base
   include ActiveJob::Locking::Unique
 
   # Make sure the lock_key is always the same
-  def lock_key
+  def lock_key(object)
     self.class.name
   end
  
-  def perform
+  def perform(object)
     # do some work
   end
 end
@@ -102,11 +102,13 @@ and performed.
 By default the key is defined as:
 
 ```ruby
- def lock_key
+ def lock_key(*args)
    [self.class.name, serialize_arguments(self.arguments)].join('/')
  end 
 ```
 Thus it has the format `<job class name>/<serialized_job_arguments>`
+
+The args passed to the lock key method are the same that are passed to the job's perform method.
 
 To use this gem, you will want to override this method per job.
   
@@ -115,7 +117,7 @@ To use this gem, you will want to override this method per job.
 Allow only one job per queue to be enqueued or performed: 
   
 ```ruby
- def lock_key
+ def lock_key(*args)
    self.queue
  end 
 ```
@@ -123,7 +125,7 @@ Allow only one job per queue to be enqueued or performed:
 Allow only one instance of a job class to be enqueued of performed:  
   
 ```ruby
- def lock_key
+ def lock_key(*args)
    self.class.name
  end 
 ```
