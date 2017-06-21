@@ -1,18 +1,23 @@
 module ActiveJob
   module Locking
-    module Enqueue
+    module Unique
       extend ::ActiveSupport::Concern
 
       included do
         include ::ActiveJob::Locking::Base
 
         before_enqueue do |job|
-          lock = self.adapter.lock
+          lock = job.adapter.lock
           throw :abort unless lock
         end
 
-        after_perform do |job|
+        rescue_from(Exception) do |exception|
           self.adapter.unlock
+          raise
+        end
+
+        after_perform do |job|
+          job.adapter.unlock
         end
       end
     end

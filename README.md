@@ -6,8 +6,8 @@ ActiveJob Locking
 
 activejob-locking lets you control how ActiveJobs are enqueued and performed:
 
-* Allow only one job to be enqueued at a time  (based on a lock_id)
-* Allow only one job to be peformed at a time (also based on a lock_id)
+* Allow only one job to be enqueued at a time - thus a "unique" job
+* Allow only one job to be performed at a time - thus a "serialized" job
 
 There are many other similar gems including [resque-lock-timeout](https://github.com/lantins/resque-lock-timeout),
 [activejob-traffic-control](https://github.com/nickelser/activejob-traffic_control), [activejob-lock](https://github.com/idolweb/activejob-lock),
@@ -24,14 +24,14 @@ Add this line to your application's Gemfile:
 gem 'activejob-locking'
 ```
 
-Enqueueing
+Unique Jobs
 ------------
 Sometime you only want to enqueue one instance of a job.  No other similar job should be enqueued until the first one 
 is completed. 
 
 ```ruby
-class EnqueueDropJob < ActiveJob::Base
-  include ActiveJob::Locking::Enqueue
+class UniqueJob < ActiveJob::Base
+  include ActiveJob::Locking::Unique
 
   # Make sure the lock_key is always the same
   def lock_key
@@ -48,14 +48,14 @@ never be enqueued or it will wait to the first job is performed.  That is contro
 [options](##options) described below.
 
 
-Performing
+Serialized Jobs
 ------------
 Sometime you only want to perform one instance of a job at a time.  No other similar job should be performed until the first one 
 is completed. 
 
 ```ruby
-class EnqueueDropJob < ActiveJob::Base
-  include ActiveJob::Locking::Perform
+class SerializedJob < ActiveJob::Base
+  include ActiveJob::Locking::Serialized
 
   # Make sure the lock_key is always the same
   def lock_key
@@ -136,7 +136,7 @@ available at:
 ```ruby
 ActiveJob::Locking.options
 ```
-This should be updated using a Rails initializer.  Each job class can override invidual options as it sees fit.
+This should be updated using a Rails initializer.  Each job class can override individual options as it sees fit.
 
 ### Adapter
 
@@ -151,7 +151,7 @@ Locally update:
 
 ```ruby
 class ExampleJob < ActiveJob::Base
-  include ActiveJob::Locking::Perform
+  include ActiveJob::Locking::Serialized
 
   self.adapter = ActiveJob::Locking::Adapters::SuoRedis
 end
@@ -171,13 +171,37 @@ Locally update:
 
 ```ruby
 class ExampleJob < ActiveJob::Base
-  include ActiveJob::Locking::Perform
+  include ActiveJob::Locking::Serialized
 
   self.hosts = 'localhost'
 end
 ```
 
-### Time
+### lock_acquire_time
+
+The is the timeout for acquiring a lock.  The value is specified in seconds and defaults to 1. It must
+be greater than zero and cannot be nil.
+
+Globally update:
+
+```ruby
+ActiveJob::Locking.options.lock_acquire_time = 1
+```
+Locally update:
+
+```ruby
+class ExampleJob < ActiveJob::Base
+  include ActiveJob::Locking::Unique
+
+  self.lock_acquire_time = 1
+end
+```
+This greatly influences how enqueuing behavior works.  If the timeout is short, then jobs that are waiting to
+be enqueued are dropped and the before_enqueue callback will fail. If the timeout is infinite, then jobs will wait 
+in turn to get enqueued.  If the timeout is somewhere in between then it will depend on how long the jobs
+take to execute.
+
+### lock_time
 
 The is the time to live for any acquired locks.  For most locking gems this is mapped to their concept of "stale" locks.
 That means that if an attempt is made to access the lock after it is expired, it will be considered unlocked.  That is in
@@ -188,41 +212,18 @@ The value is specified in seconds and defaults to 100.
 Globally update:
 
 ```ruby
-ActiveJob::Locking.options.time = 100
+ActiveJob::Locking.options.lock_time = 100
 ```
-Locally update (notice the different method name to avoid potential conflicts):
+Locally update:
 
 ```ruby
 class ExampleJob < ActiveJob::Base
-  include ActiveJob::Locking::Perform
+  include ActiveJob::Locking::Serialized
 
   self.lock_time = 100
 end
 ```
 
-### Timeout
-
-The is the timeout for acquiring a lock.  The value is specified in seconds and defaults to 1. It must
-be greater than zero and cannot be nil.
-
-Globally update:
-
-```ruby
-ActiveJob::Locking.options.timeout = 1
-```
-Locally update (notice the different method name to avoid potential conflicts):
-
-```ruby
-class ExampleJob < ActiveJob::Base
-  include ActiveJob::Locking::Enqueue
-
-  self.lock_acquire_timeout= = 1
-end
-```
-This greatly influences how enqueuing behavior works.  If the timeout is short, then jobs that are waiting to
-be enqueued are dropped and the before_enqueue callback will fail. If the timeout is infinite, then jobs will wait 
-in turn to get enqueued.  If the timeout is somewhere in between then it will depend on how long the jobs
-take to execute.
 
 ### AdapterOptions
 
@@ -238,7 +239,7 @@ Locally update (notice the different method name to avoid potential conflicts):
 
 ```ruby
 class ExampleJob < ActiveJob::Base
-  include ActiveJob::Locking::Enqueue
+  include ActiveJob::Locking::Unique
 
   self.adapter_options = {}
 end

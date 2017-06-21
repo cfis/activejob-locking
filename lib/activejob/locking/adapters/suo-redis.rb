@@ -6,8 +6,8 @@ module ActiveJob
       class SuoRedis < Base
         def create_lock_manager
           mapped_options = {connection: {host: self.options.hosts},
-                            stale_lock_expiration: self.options.time,
-                            acquisition_timeout: self.options.timeout}
+                            stale_lock_expiration: self.options.lock_time,
+                            acquisition_timeout: self.options.lock_acquire_time}
 
           Suo::Client::Redis.new(self.key, mapped_options)
         end

@@ -2,8 +2,6 @@ module ActiveJob
   module Locking
     module Adapters
       class Memory < Base
-        attr_reader :timeout
-
         @hash = Hash.new
         @mutex = Mutex.new
 
@@ -39,8 +37,8 @@ module ActiveJob
         end
 
         def lock
-          finish = Time.now + self.options.timeout
-          sleep_time = [5, self.options.timeout / 5].min
+          finish = Time.now + self.options.lock_acquire_time
+          sleep_time = [5, self.options.lock_acquire_time / 5].min
 
           begin
             lock = self.class.lock(key)
@@ -48,7 +46,7 @@ module ActiveJob
             sleep(sleep_time)
           end while Time.now < finish
 
-          return false
+          false
         end
 
         def unlock

@@ -1,20 +1,20 @@
 module ActiveJob
   module Locking
-    module Perform
+    module Serialized
       extend ::ActiveSupport::Concern
 
       included do
         include ::ActiveJob::Locking::Base
 
         around_perform do |job, block|
-          if self.adapter.lock
+          if job.adapter.lock
             begin
               block.call
             ensure
-              self.adapter.unlock
+              job.adapter.unlock
             end
           else
-            self.class.set(wait: 5.seconds).perform_later(job)
+            job.class.set(wait: job.class.lock_acquire_time).perform_later(*job.arguments)
           end
         end
       end

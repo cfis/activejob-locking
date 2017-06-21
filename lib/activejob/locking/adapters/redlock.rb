@@ -6,14 +6,14 @@ module ActiveJob
       class Redlock < Base
         def create_lock_manager
           mapped_options = self.options.adapter_options
-          mapped_options[:retry_count] = ::Redlock::Client::DEFAULT_RETRY_COUNT
-          mapped_options[:retry_delay] = 2000 * ((self.options.timeout || 2**32) / (::Redlock::Client::DEFAULT_RETRY_COUNT * 1.0))
+          mapped_options[:retry_count] = 2 # Try to get the lock and then try again when timeout is expiring--
+          mapped_options[:retry_delay] = self.options.lock_acquire_time * 1000 # convert from seconds to milliseconds
 
           ::Redlock::Client.new(Array(self.options.hosts), mapped_options)
         end
 
         def lock
-          self.lock_token = self.lock_manager.lock(self.key, self.options.time * 1000)
+          self.lock_token = self.lock_manager.lock(self.key, self.options.lock_time * 1000)
         end
 
         def unlock

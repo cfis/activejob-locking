@@ -7,15 +7,15 @@ module ActiveJob
         def lock_options
           @lock_options ||= ActiveJob::Locking::Options.new
         end
-        delegate :adapter, :hosts, :lock_time, :lock_acquire_timeout, :adapter_options, to: :lock_options
-        delegate :adapter=, :hosts=, :lock_time=, :lock_acquire_timeout=, :adapter_options=, to: :lock_options
+        delegate :adapter, :hosts, :lock_time, :lock_acquire_time, :adapter_options, to: :lock_options
+        delegate :adapter=, :hosts=, :lock_time=, :lock_acquire_time=, :adapter_options=, to: :lock_options
       end
 
       included do
-        # We need to serialize the lock token because it could be released in a different process
+        # We need to serialize the lock token that some gems create because it could be released in a different process
         def serialize
           result = super
-          result = result.merge('lock_token' => self.adapter.lock_token) if self.adapter.lock_token
+          result['lock_token'] = self.adapter.lock_token
           result
         end
 
@@ -29,11 +29,17 @@ module ActiveJob
         end
 
         def adapter
-          # Merge local and global options
-          merged_options = ActiveJob::Locking.options.dup.merge(self.class.lock_options)
+          @adapter ||= begin
+            # Make sure arguments are deserialized so calling lock key is safe
+            deserialize_arguments_if_needed
 
-          # Remember the lock might be acquired in one process and released in another
-          @adapter ||= merged_options.adapter.new(self.lock_key, merged_options)
+            # Merge local and global options
+            merged_options = ActiveJob::Locking.options.dup.merge(self.class.lock_options)
+
+            # Remember the lock might be acquired in one process and released in another
+            merged_options.adapter.new(self.lock_key, merged_options)
+          end
+          @adapter
         end
       end
     end

@@ -1,8 +1,7 @@
-class EnqueueWaitLargeTimeoutJob < ActiveJob::Base
-  include ActiveJob::Locking::Enqueue
+class SerialJob < ActiveJob::Base
+  include ActiveJob::Locking::Serialized
 
-  # Wait for 10 seconds to get a lock
-  self.lock_acquire_timeout = 10
+  self.lock_acquire_time = 2
 
   # We want the job ids to be all the same for testing
   def lock_key

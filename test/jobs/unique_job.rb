@@ -1,7 +1,7 @@
-class PerformSeriallyJob < ActiveJob::Base
-  include ActiveJob::Locking::Perform
+class UniqueJob < ActiveJob::Base
+  include ActiveJob::Locking::Unique
 
-  self.lock_acquire_timeout = 1.hour
+  self.lock_acquire_time = 2
 
   # We want the job ids to be all the same for testing
   def lock_key

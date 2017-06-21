@@ -11,11 +11,9 @@ require 'activejob/locking/adapters/redis-semaphore'
 require 'activejob/locking/adapters/redlock'
 require 'activejob/locking/adapters/suo-redis'
 
-require_relative './jobs/enqueue_drop_job'
-require_relative './jobs/enqueue_wait_job'
-require_relative './jobs/enqueue_wait_timeout_job'
-require_relative './jobs/enqueue_wait_large_timeout_job'
-require_relative './jobs/perform_serially_job'
+require_relative './jobs/unique_job'
+require_relative './jobs/fail_job'
+require_relative './jobs/serial_job'
 
 def redis_reset
   Kernel.system('redis-cli FLUSHALL')
