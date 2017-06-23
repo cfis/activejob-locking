@@ -159,15 +159,15 @@ class ExampleJob < ActiveJob::Base
 end
 ```
 
-### Host
+### Hosts
 
-The host(s) of the distributed system. This format will be dependent on the locking gem, so please read its 
-documentation.  
+An array of hosts for the distributed system. This format is dependent on the locking gem, but generally is a url or an existing Memcache or Redis
+connection. Please refer to the appropriate locking gem's documentation documentation.  
 
 Globally update:
 
 ```ruby
-ActiveJob::Locking.options.hosts = 'localhost'
+ActiveJob::Locking.options.hosts = ['localhost']
 ```
 Locally update:
 
@@ -175,7 +175,7 @@ Locally update:
 class ExampleJob < ActiveJob::Base
   include ActiveJob::Locking::Serialized
 
-  self.hosts = 'localhost'
+  self.hosts = ['localhost']
 end
 ```
 
@@ -225,7 +225,6 @@ class ExampleJob < ActiveJob::Base
   self.lock_time = 100
 end
 ```
-
 
 ### AdapterOptions
 

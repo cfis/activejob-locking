@@ -1,6 +1,10 @@
 ## 0.3.0 (2017-06-21)
 
-- Change lock_key signature
+- Cleanup handling of hosts
+
+## 0.3.0 (2017-06-21)
+
+- Change lock_key signature to match perform signature
 
 ## 0.2.0 (2017-06-20)
 
