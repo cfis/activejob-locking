@@ -10,7 +10,7 @@ require 'activejob/locking/options'
 module ActiveJob
   module Locking
     @options = ActiveJob::Locking::Options.new(adapter: ActiveJob::Locking::Adapters::Memory,
-                                               hosts: 'localhost',
+                                               hosts: ['localhost'],
                                                lock_time: 100,
                                                lock_acquire_time: 1,
                                                adapter_options: {})

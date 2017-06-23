@@ -5,7 +5,7 @@ module ActiveJob
     module Adapters
       class SuoRedis < Base
         def create_lock_manager
-          mapped_options = {connection: {host: self.options.hosts},
+          mapped_options = {connection: {host: self.options.hosts.first},
                             stale_lock_expiration: self.options.lock_time,
                             acquisition_timeout: self.options.lock_acquire_time}
 

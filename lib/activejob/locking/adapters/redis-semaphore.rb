@@ -5,7 +5,7 @@ module ActiveJob
     module Adapters
       class RedisSemaphore < Base
         def create_lock_manager
-          mapped_options = {host: self.options.hosts,
+          mapped_options = {host: self.options.hosts.first,
                             resources: 1,
                             stale_client_timeout: self.options.lock_time}.merge(self.options.adapter_options)
 
