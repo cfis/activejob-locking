@@ -179,30 +179,6 @@ class ExampleJob < ActiveJob::Base
 end
 ```
 
-### lock_acquire_time
-
-The is the timeout for acquiring a lock.  The value is specified in seconds and defaults to 1. It must
-be greater than zero and cannot be nil.
-
-Globally update:
-
-```ruby
-ActiveJob::Locking.options.lock_acquire_time = 1
-```
-Locally update:
-
-```ruby
-class ExampleJob < ActiveJob::Base
-  include ActiveJob::Locking::Unique
-
-  self.lock_acquire_time = 1
-end
-```
-This greatly influences how enqueuing behavior works.  If the timeout is short, then jobs that are waiting to
-be enqueued are dropped and the before_enqueue callback will fail. If the timeout is infinite, then jobs will wait 
-in turn to get enqueued.  If the timeout is somewhere in between then it will depend on how long the jobs
-take to execute.
-
 ### lock_time
 
 The is the time to live for any acquired locks.  For most locking gems this is mapped to their concept of "stale" locks.
@@ -226,6 +202,56 @@ class ExampleJob < ActiveJob::Base
 end
 ```
 
+You almost surely want the lock_time to be greater than the time it takes to execute the job.  Otherwise, the lock will expire
+and extra jobs will start to run. When the job finishes, or fails, the lock will be released.  However, remember that the job 
+could be terminated by the operating system or a monitoring system (such as monit). In that case, the lock won't be released
+and will remain in force until its lock_time expires. 
+
+### lock_acquire_time
+
+The is the timeout for acquiring a lock.  The value is specified in seconds and defaults to 1. It must
+be greater than zero and cannot be nil.
+
+Globally update:
+
+```ruby
+ActiveJob::Locking.options.lock_acquire_time = 1
+```
+Locally update:
+
+```ruby
+class ExampleJob < ActiveJob::Base
+  include ActiveJob::Locking::Unique
+
+  self.lock_acquire_time = 1
+end
+```
+
+Remember that most locking gems block the current thread when trying to acquire a lock. Therefore you likely want
+lock_acquire_time to be low.  However, the lower it is the more likely that unique jobs that are enqueued will 
+expire and be dropped.
+
+### enqueue_time
+
+The is the time to re-enqueue a job if the lock_time has expired. Thus this value is only relevant for
+serialized jobs since unique jobs will be dropped instead of enqueded.
+
+The value is specified in seconds and defaults to 100.
+
+Globally update:
+
+```ruby
+ActiveJob::Locking.options.enqueue_time = 100
+```
+Locally update:
+
+```ruby
+class ExampleJob < ActiveJob::Base
+  include ActiveJob::Locking::Serialized
+
+  self.enqueue_time = 100
+end
+```
 
 ### AdapterOptions
 

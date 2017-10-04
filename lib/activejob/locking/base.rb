@@ -7,8 +7,8 @@ module ActiveJob
         def lock_options
           @lock_options ||= ActiveJob::Locking::Options.new
         end
-        delegate :adapter, :hosts, :lock_time, :lock_acquire_time, :adapter_options, to: :lock_options
-        delegate :adapter=, :hosts=, :lock_time=, :lock_acquire_time=, :adapter_options=, to: :lock_options
+        delegate :adapter, :enqueue_time, :hosts, :lock_time, :lock_acquire_time, :adapter_options, to: :lock_options
+        delegate :adapter=, :enqueue_time=, :hosts=, :lock_time=, :lock_acquire_time=, :adapter_options=, to: :lock_options
       end
 
       included do

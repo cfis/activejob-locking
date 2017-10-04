@@ -11,8 +11,9 @@ module ActiveJob
   module Locking
     @options = ActiveJob::Locking::Options.new(adapter: ActiveJob::Locking::Adapters::Memory,
                                                hosts: 'localhost',
-                                               lock_time: 100,
-                                               lock_acquire_time: 1,
+                                               enqueue_time: 100, # seconds
+                                               lock_time: 100, # seconds
+                                               lock_acquire_time: 1, # seconds
                                                adapter_options: {})
 
     def self.options

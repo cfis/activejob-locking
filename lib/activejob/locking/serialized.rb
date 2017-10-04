@@ -14,7 +14,7 @@ module ActiveJob
               job.adapter.unlock
             end
           else
-            job.class.set(wait: job.class.lock_acquire_time).perform_later(*job.arguments)
+            job.class.set(wait: job.adapter.options.enqueue_time).perform_later(*job.arguments)
           end
         end
       end
