@@ -1,9 +1,9 @@
-## 0.4.0 (2017-10-03)
+## 0.5.0 (2017-10-03)
 
 - Add enqueue_time parameter
 - Fix bug in setting enqueue time
 
-## 0.3.0 (2017-06-21)
+## 0.4.0 (2017-06-21)
 
 - Cleanup handling of hosts
 
