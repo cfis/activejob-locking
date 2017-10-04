@@ -9,7 +9,7 @@ module ActiveJob
           mapped_options[:retry_count] = 2 # Try to get the lock and then try again when timeout is expiring--
           mapped_options[:retry_delay] = self.options.lock_acquire_time * 1000 # convert from seconds to milliseconds
 
-          ::Redlock::Client.new(Array(self.options.hosts), mapped_options)
+          ::Redlock::Client.new(self.options.hosts, mapped_options)
         end
 
         def lock
