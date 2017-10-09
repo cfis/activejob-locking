@@ -1,3 +1,7 @@
+## 0.5.1 (2017-10-08)
+
+- Loosen activejob dependency to work with ActiveJob 5.x
+
 ## 0.5.0 (2017-10-03)
 
 - Add enqueue_time parameter
