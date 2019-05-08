@@ -6,7 +6,6 @@ Gem::Specification.new do |s|
   s.license           = 'MIT'
   s.homepage          = 'http://github.com/cfis/activejob-locking'
   s.authors           = ['Charlie Savage']
-  s.has_rdoc          = false
 
   s.files             = %w(README.md Rakefile LICENSE HISTORY.md Gemfile)
   s.files            += Dir.glob('lib/**/*')
