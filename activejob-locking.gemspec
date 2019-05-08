@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name              = 'activejob-locking'
-  s.version           = '0.5.1'
+  s.version           = '0.6.0'
   s.date              = Time.now.strftime('%Y-%m-%d')
   s.summary           = 'ActiveJob locking to control how jobs are enqueued and performed.'
   s.license           = 'MIT'
@@ -12,8 +12,8 @@ Gem::Specification.new do |s|
   s.files            += Dir.glob('lib/**/*')
   s.files            += Dir.glob('test/**/*')
 
-  s.add_dependency('activejob', '~> 5.0')
-  s.add_development_dependency('minitest', '> 5.10.0')
+  s.add_dependency('activejob')
+  s.add_development_dependency('minitest')
   s.add_development_dependency('redis-mutex')
   s.add_development_dependency('redis-semaphore')
   s.add_development_dependency('redlock')
