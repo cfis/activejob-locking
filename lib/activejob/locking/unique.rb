@@ -12,7 +12,7 @@ module ActiveJob
         end
 
         rescue_from(Exception) do |exception|
-          self.adapter.unlock
+          self.adapter.unlock rescue nil
           raise
         end
 
