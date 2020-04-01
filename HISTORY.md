@@ -1,3 +1,11 @@
+## 0.6.1 (2020-04-01)
+
+- Support Rails exception discarding when deserializing (Mattias Pfeiffer)
+
+## 0.6.0 (2019-05-19)
+
+- Update for Rails 6.x
+
 ## 0.5.1 (2017-10-08)
 
 - Loosen activejob dependency to work with ActiveJob 5.x
