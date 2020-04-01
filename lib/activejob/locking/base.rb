@@ -31,7 +31,11 @@ module ActiveJob
         def adapter
           @adapter ||= begin
             # Make sure arguments are deserialized so calling lock key is safe
-            deserialize_arguments_if_needed
+            begin
+              deserialize_arguments_if_needed
+            rescue => exception
+              rescue_with_handler(exception) || raise
+            end
 
             # Merge local and global options
             merged_options = ActiveJob::Locking.options.dup.merge(self.class.lock_options)
