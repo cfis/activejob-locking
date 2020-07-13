@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name              = 'activejob-locking'
-  s.version           = '0.6.1'
+  s.version           = '0.6.2'
   s.date              = Time.now.strftime('%Y-%m-%d')
   s.summary           = 'ActiveJob locking to control how jobs are enqueued and performed.'
   s.license           = 'MIT'

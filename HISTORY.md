@@ -1,3 +1,7 @@
+## 0.6.2 (2020-07-12)
+
+Fix unlock for Redlock adapter by correct deserializing keys as symbols (Volodymyr Byno)
+
 ## 0.6.1 (2020-04-01)
 
 - Support Rails exception discarding when deserializing (Mattias Pfeiffer)
