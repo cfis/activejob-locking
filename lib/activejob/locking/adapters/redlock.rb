@@ -17,7 +17,7 @@ module ActiveJob
         end
 
         def unlock
-          self.lock_manager.unlock(self.lock_token)
+          self.lock_manager.unlock(self.lock_token.symbolize_keys)
           self.lock_token = nil
         end
       end
