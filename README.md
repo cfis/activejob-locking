@@ -58,7 +58,7 @@ class SerializedJob < ActiveJob::Base
   include ActiveJob::Locking::Serialized
 
   # Make sure the lock_key is always the same
-  def lock_key
+  def lock_key(object)
     self.class.name
   end
 
