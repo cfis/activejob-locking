@@ -12,7 +12,7 @@ activejob-locking lets you control how ActiveJobs are enqueued and performed:
 There are many other similar gems including [resque-lock-timeout](https://github.com/lantins/resque-lock-timeout),
 [activejob-traffic-control](https://github.com/nickelser/activejob-traffic_control), [activejob-lock](https://github.com/idolweb/activejob-lock),
 [activejob-locks](https://github.com/erickrause/activejob-locks).  What is different about this gem is that it
-is agnostic on the locking mechanism.  In the same way that ActiveJob works with many apapters, ActiveJob Locking 
+is agnostic on the locking mechanism.  In the same way that ActiveJob works with many adapters, ActiveJob Locking 
 works with a variety of locking gems.
  
 Installation
@@ -44,13 +44,13 @@ class UniqueJob < ActiveJob::Base
 end
 ```
 Only one instance of this job will ever be enqueued.  If an additional job is enqueued, it will either be dropped and
-never be enqueued or it will wait to the first job is performed.  That is controlled by the job
+never be enqueued or it will wait until the first job is performed.  That is controlled by the job
 [options](##options) described below.
 
 
 Serialized Jobs
 ------------
-Sometime you only want to perform one instance of a job at a time.  No other similar job should be performed until the first one 
+Sometimes you only want to perform one instance of a job at a time.  No other similar job should be performed until the first one 
 is completed. 
 
 ```ruby
@@ -67,8 +67,8 @@ class SerializedJob < ActiveJob::Base
   end
 end
 ```
-Only one instance of this job will ever be performed.  If an additional job is enqueued, it will wait in its que until
-to the first job is performed. 
+Only one instance of this job will ever be performed.  If an additional job is enqueued, it will wait in its queue until
+the first job is performed. 
 
 Locking
 ------------
@@ -162,7 +162,7 @@ end
 ### Hosts
 
 An array of hosts for the distributed system. This format is dependent on the locking gem, but generally is a url or an existing Memcache or Redis
-connection. Please refer to the appropriate locking gem's documentation documentation.  
+connection. Please refer to the appropriate locking gem's documentation.  
 
 Globally update:
 
