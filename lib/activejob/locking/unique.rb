@@ -10,13 +10,10 @@ module ActiveJob
           lock = job.adapter.lock
           throw :abort unless lock
         end
-
-        rescue_from(Exception) do |exception|
-          self.adapter.unlock
-          raise
-        end
-
-        after_perform do |job|
+        
+        around_perform do |job, block|
+          block.call
+        ensure
           job.adapter.unlock
         end
       end

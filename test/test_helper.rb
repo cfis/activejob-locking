@@ -14,6 +14,7 @@ require 'activejob/locking/adapters/suo-redis'
 require_relative './jobs/unique_job'
 require_relative './jobs/fail_job'
 require_relative './jobs/serial_job'
+require_relative './jobs/retry_job'
 
 def redis_reset
   Kernel.system('redis-cli FLUSHALL')

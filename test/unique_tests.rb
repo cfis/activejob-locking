@@ -97,4 +97,31 @@ module UniqueTests
     assert_equal(0, ActiveJob::Base.queue_adapter.enqueued_jobs.count)
     assert_equal(threads.count, ActiveJob::Base.queue_adapter.performed_jobs.count)
   end
+
+  def test_error_propagation_allows_retry_behavior
+    # This test ensures that when a job with retry_on fails,
+    # the error is properly propagated and not swallowed by the locking mechanism
+    # This verifies the fix where around_perform ensures error propagation
+    # instead of the old rescue_from that was swallowing errors
+    
+    assert_equal(0, ActiveJob::Base.queue_adapter.enqueued_jobs.count)
+    assert_equal(0, ActiveJob::Base.queue_adapter.performed_jobs.count)
+
+    # Test that the error is properly raised and caught by retry mechanism
+    error_raised = false
+    
+    begin
+      # This should raise the TestRetryError on first execution
+      # Since we have retry_on configured, ActiveJob should catch and handle it
+      RetryJob.perform_now(1, true)
+    rescue RetryJob::TestRetryError
+      # If we get here, the error was not properly handled by retry_on
+      # This would indicate the old bug where rescue_from swallowed the error
+      error_raised = true
+    end
+    
+    # The error should NOT be raised here because retry_on should handle it
+    # and the job should succeed on the second attempt
+    assert_equal(error_raised, false, "Error should not escape - retry_on should handle it")
+  end
 end
